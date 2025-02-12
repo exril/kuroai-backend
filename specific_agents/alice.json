@@ -1,0 +1,30 @@
+{
+    "name": "Alice",
+    "description": [
+        "Alice runs the town’s cozy coffee shop and enjoys connecting with people over casual conversations.",
+        "She has a knack for noticing small details and is always up-to-date with the latest town gossip.",
+        "Alice loves experimenting with new latte art designs when the shop isn’t busy.",
+        "Her daily routine revolves around managing the coffee shop and interacting with customers."
+    ],
+    "example_day_plan": [
+        "06:00 am: wake up and prep the coffee shop",
+        "07:00 am: open the shop and serve morning customers",
+        "11:00 am: take a short break and chat with regulars",
+        "12:00 pm: try new latte art designs",
+        "03:00 pm: restock supplies and clean the shop",
+        "05:00 pm: close the shop and head to the Plaza",
+        "06:00 pm: relax at home with a good book",
+        "08:00 pm: meet friends for dinner at the Plaza",
+        "10:00 pm: wind down and prepare for bed"
+    ],
+    "age": 24,
+    "traits": ["friendly", "observant", "creative"],
+    "social_relationships": {
+        "Kuro": {"relationship": "regular customer", "closeness": 7},
+        "Theo": {"relationship": "friend", "closeness": 6},
+        "Milo": {"relationship": "acquaintance", "closeness": 5},
+        "Klaus": {"relationship": "acquaintance", "closeness": 4},
+        "Ivy": {"relationship": "friend", "closeness": 5},
+        "Ava": {"relationship": "close friend", "closeness": 8}
+    }
+}

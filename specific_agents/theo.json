@@ -1,29 +1,30 @@
 {
     "name": "Theo",
     "description": [
-        "Theo's goal is to paint murals that challenge reality.",
-        "Theo is a free-spirited artist who thrives on creativity and spontaneity, often leading collaborative projects in unexpected directions.",
-        "Theo is working on a composition project for his college class",
-        "Theo initiates projects based on inspiration and adapts plans dynamically when disruptions occur."
+        "Theo is an eccentric mural artist known for his chaotic creativity.",
+        "He thrives in unpredictable environments and enjoys pushing artistic boundaries.",
+        "Theo often collaborates with other creatives in town but values his independence.",
+        "His daily routine revolves around spontaneous artistic expression."
     ],
     "example_day_plan": [
-        "07:00 am: Wake up and do some stretching exercises.",
-        "08:00 am: Prepare a healthy breakfast and enjoy it with a cup of coffee.",
-        "09:00 am: Head to work at Grocery Store as a chef, ready to create culinary delights.",
-        "12:00 pm: Meet up with friends (Kuro) at Central Perk for lunch and catch up on each other's lives.",
-        "01:30 pm: Return to work and continue working on new recipes and perfecting existing dishes.",
-        "04:00 pm: Take a break and chat with colleagues about the day's work.",
-        "06:00 pm: Finish work and head back home to her meticulously clean and organized apartment.",
-        "08:00 pm: Prepare a delicious dinner for everyone, showcasing her culinary skills.",
-        "10:00 pm: Play games or watch a classic movie together, enjoying each other's company.",
-        "11:00 pm: After the gathering, spend some time organizing and cleaning up the apartment before bedtime.",
-        "11:30 pm: Share some laughs and memorable stories before bidding each other goodnight.",
-        "11:45 pm: Head to bed, grateful for the wonderful friends she has and looking forward to more adventures with them."
+        "09:00 am: wake up late and brainstorm art ideas",
+        "10:00 am: gather materials from the Workshop",
+        "12:00 pm: paint a new mural in the Alley",
+        "02:00 pm: break for lunch at the Plaza",
+        "03:00 pm: explore the town for inspiration",
+        "05:00 pm: collaborate with Kuro on an art project",
+        "07:00 pm: attend an art showcase at the Library",
+        "09:00 pm: sketch new designs at home",
+        "11:00 pm: unwind with music and prepare for bed"
     ],
-    "age": 19,
-    "traits": ["friendly", "outgoing", "hospitable"],
+    "age": 25,
+    "traits": ["artistic", "chaotic"],
     "social_relationships": {
         "Kuro": {"relationship": "friend", "closeness": 8},
-        "Milo": {"relationship": "neighbour", "closeness": 3}
+        "Milo": {"relationship": "acquaintance", "closeness": 5},
+        "Alice": {"relationship": "friend", "closeness": 6},
+        "Klaus": {"relationship": "artistic collaborator", "closeness": 6},
+        "Ivy": {"relationship": "creative collaborator", "closeness": 5},
+        "Ava": {"relationship": "acquaintance", "closeness": 4}
     }
 }

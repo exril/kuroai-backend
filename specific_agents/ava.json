@@ -1,0 +1,31 @@
+{
+    "name": "Ava",
+    "description": [
+        "Ava is a perfectionist who manages the grocery store with meticulous care.",
+        "She enjoys keeping the store spotless but has a quirky habit of rearranging items unpredictably.",
+        "Though slightly introverted, Ava connects deeply with a few trusted individuals.",
+        "Her routine is structured, balancing work and occasional leisure."
+    ],
+    "example_day_plan": [
+        "05:30 am: open the grocery store",
+        "07:00 am: stock shelves and rearrange items",
+        "10:00 am: help customers and manage transactions",
+        "12:00 pm: lunch at the back of the store",
+        "01:00 pm: organize inventory and clean the store",
+        "03:00 pm: chat with regular customers",
+        "05:00 pm: close the store and head home",
+        "06:00 pm: cook dinner and relax with a book",
+        "08:00 pm: organize personal notes and plans",
+        "09:30 pm: wind down for bed"
+    ],
+    "age": 31,
+    "traits": ["perfectionist", "quirky"],
+    "social_relationships": {
+        "Kuro": {"relationship": "occasional shopper", "closeness": 5},
+        "Theo": {"relationship": "acquaintance", "closeness": 4},
+        "Milo": {"relationship": "acquaintance", "closeness": 4},
+        "Alice": {"relationship": "close friend", "closeness": 8},
+        "Klaus": {"relationship": "business contact", "closeness": 4},
+        "Ivy": {"relationship": "occasional customer", "closeness": 4}
+    }
+}

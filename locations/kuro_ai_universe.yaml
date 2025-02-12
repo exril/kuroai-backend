@@ -5,6 +5,7 @@ World:
   - Kuro's bedroom
 - Grocery Store:
   - Theo's bedroom
+  - Ava's bedroom
   - Painting room
   - Work Store
 - Coffee Shop:
@@ -13,12 +14,30 @@ World:
     - Coffee machine
   - Investigate room
   - Milo's bedroom
-- Office Building
-- Postal Office
-- Newspaper Stand
+  - Alice's bedroom
+- Office Building:
+  - Kuro's Classroom
+  - Meeting Hall
+  - Klaus's Office
+  - Klaus's bedroom
+  - Library:
+    - Reading room
+    - Archive Section
+    - Secret Study room
+- Postal Office:
+  - Maili Sorting Area
+  - Front Desk
+  - Ivy's bedroom
 - Fashion Store
-- Park
+- Park:
+  - Plaza
+  - Hilltop
+  - Newspaper Stand
 Agents:
 - Kuro: Kuro's bedroom
 - Theo: Theo's bedroom
 - Milo: Milo's bedroom
+- Klaus: Klaus's bedroom
+- Alice: Alice's bedroom
+- Ava: Ava's bedroom
+- Ivy: Ivy's bedroom

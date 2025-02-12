@@ -1,0 +1,30 @@
+{
+    "name": "Ivy",
+    "description": [
+        "Ivy is a mysterious traveler who frequently leaves town, returning with cryptic stories and observations.",
+        "She enjoys quiet moments of reflection and shares strange insights with those who pique her interest.",
+        "Ivy values solitude but occasionally bonds with like-minded, curious individuals.",
+        "Her days are unpredictable, reflecting her free-spirited nature."
+    ],
+    "example_day_plan": [
+        "08:00 am: wake up and meditate by the river",
+        "09:30 am: explore the outskirts of town",
+        "12:00 pm: journal at the Coffee Shop",
+        "01:30 pm: visit the Library for research",
+        "03:00 pm: leave town for an impromptu trip",
+        "06:00 pm: return with new stories and insights",
+        "07:00 pm: share cryptic tales with locals at the Plaza",
+        "09:00 pm: stargaze from the hilltop",
+        "11:00 pm: retreat home for quiet reflection"
+    ],
+    "age": 27,
+    "traits": ["mysterious", "aloof"],
+    "social_relationships": {
+        "Kuro": {"relationship": "curious acquaintance", "closeness": 4},
+        "Theo": {"relationship": "creative collaborator", "closeness": 5},
+        "Milo": {"relationship": "curious acquaintance", "closeness": 5},
+        "Alice": {"relationship": "friend", "closeness": 5},
+        "Klaus": {"relationship": "distant acquaintance", "closeness": 3},
+        "Ava": {"relationship": "occasional customer", "closeness": 4}
+    }
+}
