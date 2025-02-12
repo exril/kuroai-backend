@@ -249,13 +249,11 @@ def get_15m_activity():
     list_of_agent_statuses = []
     logging.info(curr_date + ' ' + specific_time)
     for agent in agents:
-        overall_status = requests.get(
-            url=urljoin(request.base_url, url_for("get_15m_activity_single")), 
-            params = {
-                "curr_date": curr_date,
-                "name": agent.name,
-                "specific_time": specific_time
-        }).json()
+        curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
+
+        logging.info(curr_date + ' ' + specific_time)
+
+        overall_status = name_to_agent[agent.name].get_status_json(curr_time, generative_location)
         
         # agent.get_status_json(curr_time, generative_location)
         list_of_agent_statuses.append(overall_status)
@@ -364,7 +362,11 @@ if __name__ == '__main__':
     agents, dates_of_interest, specific_times_of_interest, generative_location, folder_name, curr_time_to_daily_event = initialize(args)
     name_to_agent = {agent.name: agent for agent in agents}
     print("starting")
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
     
 
     
