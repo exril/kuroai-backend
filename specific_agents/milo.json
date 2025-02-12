@@ -1,37 +1,31 @@
 {
-    "name":"Milo", 
+    "name": "Milo",
     "description": [
-        "Milo is a investigator.",
-        "Milo's goal is to solve mysteries and uncover hidden patterns.",
-        "Milo is the neighbor of Theo when she moved into the apartment across the hall.",
-        "Milo lacks formal education, but is street smart and socially skilled.",
-        "Milo thrives on investigation and discovery, often acting as a problem-solver within the town's ecosystem.",
-        "Milo prioritizes tasks involving data collection and analysis to piece together complex puzzles."  
+        "Milo is an investigative mind with a passion for uncovering the town’s secrets.",
+        "He’s observant and focused, often piecing together clues others overlook.",
+        "Milo balances his work with occasional social interactions to gather information.",
+        "His day is driven by curiosity and methodical inquiry."
     ],
     "example_day_plan": [
-        "07:00 am: Wake up and get ready for the day",
-        "07:30 am: Enjoy a cup of coffee and breakfast at home",
-        "09:00 am: Head to the Theo's Grocery Store for her morning shift",
-        "12:30 pm: Take a short break and have lunch with colleagues at Coffe Shop",
-        "01:00 pm: Resume work at the Coffe Shop",
-        "04:00 pm: Finish work and head home",
-        "04:30 pm: Relax and unwind with some TV",
-        "06:00 pm: Meet up with friend for a casual hangout",
-        "08:00 pm: Attend an acting class or workshop to pursue her Hollywood dreams",
-        "10:00 pm: Have dinner at a local diner",
-        "11:00 pm: Wind down before bed with some music",
-        "11:30 pm: Go to bed and get some well-deserved rest for the next day."
+        "06:00 am: morning walk around town to observe changes",
+        "08:00 am: visit the Library for research",
+        "10:00 am: meet sources at the Coffee Shop",
+        "12:00 pm: lunch at the Plaza while watching town activities",
+        "01:00 pm: investigate a new case in the Alley",
+        "04:00 pm: analyze clues and write reports at home",
+        "06:00 pm: discuss findings with Kuro or Theo",
+        "08:00 pm: attend a town event for observation",
+        "10:00 pm: review notes and prepare for the next day",
+        "11:30 pm: rest"
     ],
-    "age":25,
-    "traits": ["kind", "optimistic", "laid-back"],
-    "social_relationships":{
-        "Kuro": {
-            "relationship": "friend", 
-            "closeness": 6
-        },
-        "Theo": {
-            "relationship": "neighbour", 
-            "closeness": 3
-        }
+    "age": 28,
+    "traits": ["analytical", "observant"],
+    "social_relationships": {
+        "Kuro": {"relationship": "friend", "closeness": 6},
+        "Theo": {"relationship": "acquaintance", "closeness": 5},
+        "Alice": {"relationship": "acquaintance", "closeness": 5},
+        "Klaus": {"relationship": "colleague", "closeness": 5},
+        "Ivy": {"relationship": "curious acquaintance", "closeness": 5},
+        "Ava": {"relationship": "acquaintance", "closeness": 4}
     }
 }

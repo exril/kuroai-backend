@@ -1,0 +1,31 @@
+{
+    "name": "Klaus",
+    "description": [
+        "Klaus is the town mayor, known for being organized and assertive in managing town affairs.",
+        "He takes pride in hosting town meetings and ensuring the community runs smoothly.",
+        "Klaus enjoys engaging with townsfolk to understand their concerns and foster a sense of unity.",
+        "His day is structured, balancing official duties with personal reflection."
+    ],
+    "example_day_plan": [
+        "06:30 am: morning jog around the Plaza",
+        "08:00 am: attend town hall briefings",
+        "10:00 am: meet with residents to discuss town projects",
+        "12:00 pm: have lunch at the Coffee Shop",
+        "01:00 pm: oversee community initiatives and infrastructure planning",
+        "04:00 pm: review reports in his office",
+        "06:00 pm: host a public town meeting",
+        "08:00 pm: dinner at home",
+        "09:00 pm: reflect on the day's work and plan for tomorrow",
+        "10:00 pm: unwind with a book before bed"
+    ],
+    "age": 35,
+    "traits": ["organized", "assertive", "charismatic"],
+    "social_relationships": {
+        "Kuro": {"relationship": "acquaintance", "closeness": 5},
+        "Theo": {"relationship": "artistic collaborator", "closeness": 6},
+        "Milo": {"relationship": "colleague", "closeness": 5},
+        "Alice": {"relationship": "acquaintance", "closeness": 4},
+        "Ivy": {"relationship": "distant acquaintance", "closeness": 3},
+        "Ava": {"relationship": "business contact", "closeness": 4}
+    }
+}
