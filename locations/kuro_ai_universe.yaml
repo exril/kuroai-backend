@@ -1,0 +1,24 @@
+World:
+- Kuro's House:
+  - Bathroom
+  - Common room
+  - Kuro's bedroom
+- Grocery Store:
+  - Theo's bedroom
+  - Painting room
+  - Work Store
+- Coffee Shop:
+  - Kitchen:
+    - Stove
+    - Coffee machine
+  - Investigate room
+  - Milo's bedroom
+- Office Building
+- Postal Office
+- Newspaper Stand
+- Fashion Store
+- Park
+Agents:
+- Kuro: Kuro's bedroom
+- Theo: Theo's bedroom
+- Milo: Milo's bedroom
