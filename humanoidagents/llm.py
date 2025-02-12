@@ -5,7 +5,7 @@ import os
 import time
 from functools import cache
 
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 
 
 class OpenAILLM:
