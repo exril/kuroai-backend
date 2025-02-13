@@ -320,6 +320,11 @@ def write_logs():
     specific_time = data['specific_time']
     curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
     
+    state_path = f"../generations/kuro_ai_universe/state_{curr_date}_{specific_time.replace(':', 'h')}.json"
+    if os.path.exists(state_path):
+        saved_state_data = json.load(open(state_path))
+        return saved_state_data
+    
     list_of_agent_statuses = []
     logging.info(curr_date + ' ' + specific_time)
     for _, agent in name_to_agent.items():
