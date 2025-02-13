@@ -200,7 +200,7 @@ def plan():
     curr_date = data['curr_date']
 
     plans = []
-    for _, agent in name_to_agent:
+    for _, agent in name_to_agent.items():
         curr_time = datetime.fromisoformat(curr_date)
         condition = curr_time_to_daily_event[curr_time] if curr_time in curr_time_to_daily_event else None
         plan = agent.plan(curr_time=curr_time, condition=condition)
