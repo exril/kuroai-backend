@@ -73,7 +73,7 @@ curr_time_to_daily_event = get_curr_time_to_daily_event(daily_events_filename)
 ## time
 dates_of_interest = DatetimeNL.get_date_range(start_date, end_date)
 specific_times_of_interest = []
-for hour in range(15, 24):
+for hour in range(6, 24):
     for minutes in ['00', '30']:
         hour_str = str(hour) if hour > 9 else '0' + str(hour)
         total_time = f"{hour_str}:{minutes}"
