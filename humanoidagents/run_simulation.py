@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import os
+import time
 from datetime import datetime
 
 from tqdm import tqdm
@@ -72,8 +73,8 @@ curr_time_to_daily_event = get_curr_time_to_daily_event(daily_events_filename)
 ## time
 dates_of_interest = DatetimeNL.get_date_range(start_date, end_date)
 specific_times_of_interest = []
-for hour in range(6, 24):
-    for minutes in ['00', '15', '30', '45']:
+for hour in range(15, 24):
+    for minutes in ['00', '30']:
         hour_str = str(hour) if hour > 9 else '0' + str(hour)
         total_time = f"{hour_str}:{minutes}"
         specific_times_of_interest.append(total_time)
@@ -114,3 +115,4 @@ for curr_date in dates_of_interest:
         }
         output_filename = f"{folder_name}/state_{curr_date}_{specific_time.replace(':','h')}.json"
         write_json_file(overall_log, output_filename)
+        time.sleep(300)
