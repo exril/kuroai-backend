@@ -267,6 +267,33 @@ updated plan:
 
         return conversation_history
     
+    def get_agent_current_thoughts(self, curr_time, location, activity):
+        agent_states_nl = self.get_agent_states_nl()
+        
+        prompt = f"""
+        Name: {self.name}
+        Current Time: {curr_time}
+        Current Activity: {activity}
+        Current Location: {location[0]}
+        His feeing is: {agent_states_nl}!
+        What would {self.name} think at the moment?
+        {self.name}:
+        """
+        llm_response = self.LLM.get_llm_response(prompt)
+
+        # in case there are leading or trailing whitespace
+
+        llm_response = llm_response.strip()
+        # in case there are multiple alternative responses presented, use the first one
+        if '\n' in llm_response:
+            llm_response = llm_response.split('\n')[0]
+        
+        # in case response starts and ends with "" as a substring within the text (i.e. sometime includes some reason on why it's said this way)
+        if len(llm_response.split('"')) == 3:
+            llm_response = llm_response.split('"')[1]
+
+        return llm_response
+    
     def get_status_json(self, curr_time, world_location):
         self.get_15m_plan(curr_time)
 
@@ -275,7 +302,8 @@ updated plan:
         location = self.get_agent_location(activity, curr_time, world_location)
         most_recent_15m_plan = [memory_item for memory_item in self.memory if memory_item['memory_type'] == '15 minutes plan'][-1]['activity']
         most_recent_day_plan = [memory_item for memory_item in self.memory if memory_item['memory_type'] == 'day_plan'][-1]['activity']
-
+        current_thoughts = self.get_agent_current_thoughts(curr_time, location, activity)
+        
         # tracking most recent suggested change to understand suggestion made to change
         most_recent_suggested_change = self.suggested_changes[-1] if self.suggested_changes else None
         if most_recent_suggested_change is not None:
@@ -289,6 +317,7 @@ updated plan:
         status = {
             "name": self.name,
             "activity": activity,
+            "thoughts": current_thoughts,
             "activity_emoji": activity_emoji,
             "most_recent_15m_plan": most_recent_15m_plan,
             "most_recent_day_plan": most_recent_day_plan,
@@ -299,7 +328,6 @@ updated plan:
             "social_relationships": self.social_relationships
         }
         return status
-    
 
     def speak_to_other_agent(self, other_agent, curr_time, reaction=None, conversation_history=[]):
         # traits are already part of self.summary
