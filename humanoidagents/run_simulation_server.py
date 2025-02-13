@@ -6,6 +6,7 @@ import logging
 import random
 from collections import defaultdict
 from urllib.parse import urljoin
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from humanoid_agent import HumanoidAgent
 from location import Location
@@ -199,13 +200,10 @@ def plan():
     curr_date = data['curr_date']
 
     plans = []
-    for agent in agents:
-        plan = requests.get(
-            url=urljoin(request.base_url, url_for("plan_single")), 
-            params = {
-                "curr_date": curr_date,
-                "name": agent.name
-        }).text
+    for _, agent in name_to_agent:
+        curr_time = datetime.fromisoformat(curr_date)
+        condition = curr_time_to_daily_event[curr_time] if curr_time in curr_time_to_daily_event else None
+        plan = agent.plan(curr_time=curr_time, condition=condition)
         plans.append(plan)
     return plans
 
@@ -245,21 +243,28 @@ def get_15m_activity():
     curr_date = data['curr_date']
     specific_time = data['specific_time']
 
-    # curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
+    curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
     list_of_agent_statuses = []
     logging.info(curr_date + ' ' + specific_time)
-    for agent in agents:
-        curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
+    for _, agent in name_to_agent.items():
+        # curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
 
         logging.info(curr_date + ' ' + specific_time)
 
-        overall_status = name_to_agent[agent.name].get_status_json(curr_time, generative_location)
+        overall_status = agent.get_status_json(curr_time, generative_location)
         
         # agent.get_status_json(curr_time, generative_location)
         list_of_agent_statuses.append(overall_status)
 
         logging.info("Overall status:")
         logging.info(json.dumps(overall_status, indent=4))
+    # with ThreadPoolExecutor(max_workers=3) as executor:
+    #     futures = [executor.submit(agent.get_status_json, curr_time, generative_location) for _, agent in name_to_agent.items()]
+    #     for future in as_completed(futures):
+    #         overall_status = future.result()
+    #         list_of_agent_statuses.append(overall_status)
+    #         logging.info("Overall status:")
+    #         logging.info(json.dumps(overall_status, indent=4))
     return list_of_agent_statuses
 
 @app.route('/conversations', methods=['POST', 'GET'])
@@ -313,19 +318,39 @@ def write_logs():
 
     curr_date = data['curr_date']
     specific_time = data['specific_time']
-    list_of_agent_statuses = requests.get(
-        url=urljoin(request.base_url, url_for("get_15m_activity")), 
-        params = {
-            "curr_date": curr_date,
-            "specific_time": specific_time
-    }).json()
+    curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
+    
+    list_of_agent_statuses = []
+    logging.info(curr_date + ' ' + specific_time)
+    for _, agent in name_to_agent.items():
+        # curr_time = datetime.fromisoformat(f'{curr_date}T{specific_time}')
 
-    location_to_conversations = requests.get(
-        url=urljoin(request.base_url, url_for("get_15m_conversations")), 
-        params = {
-            "curr_date": curr_date,
-            "specific_time": specific_time
-    }).json()
+        logging.info(curr_date + ' ' + specific_time)
+
+        overall_status = agent.get_status_json(curr_time, generative_location)
+        
+        # agent.get_status_json(curr_time, generative_location)
+        list_of_agent_statuses.append(overall_status)
+
+        logging.info("Overall status:")
+        logging.info(json.dumps(overall_status, indent=4))
+
+    location_to_agents = bucket_agents_by_location(list_of_agent_statuses, [agent for _, agent in name_to_agent.items()])
+    # only 1 conversation per location, when there are 2 or more agents
+    location_to_conversations = defaultdict(list)
+    for location, agents in location_to_agents.items():
+        if len(agents) == 1:
+            convo_history = agents[0].dialogue(agents[0], curr_time)
+            logging.info(f"{agents[0].name}'s Thoughts at {location}")
+            logging.info(json.dumps(convo_history, indent=4))
+            location_to_conversations['-'.join(location)].append(convo_history)
+        if len(agents) > 1:
+            selected_agents = random.sample(agents, 2)
+            initiator, responder = selected_agents
+            convo_history = initiator.dialogue(responder, curr_time)
+            logging.info(f"Conversations at {location}")
+            logging.info(json.dumps(convo_history, indent=4))
+            location_to_conversations['-'.join(location)].append(convo_history)
 
     overall_log = {
         "date": curr_date,
