@@ -324,7 +324,7 @@ def write_logs():
     if os.path.exists(state_path):
         saved_state_data = json.load(open(state_path))
         return saved_state_data
-    
+    return {}
     list_of_agent_statuses = []
     logging.info(curr_date + ' ' + specific_time)
     for _, agent in name_to_agent.items():
