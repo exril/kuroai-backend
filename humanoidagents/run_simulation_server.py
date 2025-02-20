@@ -1,7 +1,7 @@
 import json
 import os
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import random
 from collections import defaultdict
@@ -13,7 +13,7 @@ from location import Location
 from utils import DatetimeNL, load_json_file, write_json_file, bucket_agents_by_location, override_agent_kwargs_with_condition, get_curr_time_to_daily_event
 
 import requests
-from flask import Flask, request, url_for, request
+from flask import Flask, request, url_for, request, jsonify
 from flask_caching import Cache
 
 
@@ -324,7 +324,7 @@ def write_logs():
     if os.path.exists(state_path):
         saved_state_data = json.load(open(state_path))
         return saved_state_data
-    
+    return {}
     list_of_agent_statuses = []
     logging.info(curr_date + ' ' + specific_time)
     for _, agent in name_to_agent.items():
@@ -368,6 +368,99 @@ def write_logs():
     write_json_file(overall_log, output_filename)
     return overall_log
 
+@app.route("/analytics", methods=['POST', 'GET'])
+def get_analytics():
+    data = request.json
+    
+    start_time_str = data.get('start_time')  # e.g., "2025-02-03 08:00"
+    end_time_str = data.get('end_time')      # e.g., "2025-02-06 15:30"
+    try:
+        start_time = datetime.strptime(start_time_str, '%Y-%m-%d %H:%M')
+        end_time = datetime.strptime(end_time_str, '%Y-%m-%d %H:%M')
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM'."}), 400
+
+    # Generate a list of time series with 30-minute intervals
+    time_series = []
+    if start_time.minute < 30:
+        # Set minute to 0
+        start_time = start_time.replace(minute=0, second=0, microsecond=0)
+    else:
+        # Set minute to 30
+        start_time = start_time.replace(minute=30, second=0, microsecond=0)
+    current_time = start_time
+    while current_time <= end_time:
+        if 6 <= current_time.hour:  # Include only times from 06:00 onward
+            time_series.append(current_time.strftime('%Y-%m-%d %H:%M'))
+        current_time += timedelta(minutes=60)
+    
+    timestamps = []
+    analytics_data = dict()
+    for name, _ in name_to_agent.items():
+        analytics_data[name] = {
+            "basicNeeds": {
+                "timestamps": [],
+                "energy": [],
+                "health": [],
+            },
+            "socialRelationships": {},
+            "activities": {
+                "timestamps": [],
+                "activities": [],
+            },
+            "emotions": {},
+        }
+    for time in time_series:
+        data_file_name = f"state_{time.split(' ')[0]}_{time.split(' ')[1].replace(':', 'h')}.json"
+        state_data = json.load(open(f"../generations/kuro_ai_universe/{data_file_name}"))
+        timestamps.append(time)
+        for agent in state_data["agents"]:
+            analytics_data[agent['name']]['basicNeeds']['timestamps'].append(time)
+            analytics_data[agent['name']]['basicNeeds']['energy'].append(agent['basic_needs']['energy'] * 10)
+            analytics_data[agent['name']]['basicNeeds']['health'].append(agent['basic_needs']['health'] * 10)
+            analytics_data[agent['name']]['emotions'][agent['emotion']] = analytics_data[agent['name']]['emotions'].get(agent['emotion'], 0) + 1
+        for location, conversations_in_location in state_data['conversations'].items():
+            for conversations in conversations_in_location:
+                if len(conversations) < 2:
+                    continue
+                analytics_data[conversations[0]['name']]['socialRelationships'][conversations[1]['name']] = analytics_data[conversations[0]['name']]['socialRelationships'].get(conversations[1]['name'], 0) + len(conversations)
+
+    last_5_times = time_series[-5:-1]
+    last_state_data = json.load(open(f"../generations/kuro_ai_universe/state_{time_series[-1].split(' ')[0]}_{time_series[-1].split(' ')[1].replace(':', 'h')}.json"))
+    for agent, analytics in analytics_data.items():
+        relationship_data = []
+        agent_social_relationships = {}
+        for agent_state in last_state_data['agents']:
+            if agent_state['name'] == agent:
+                agent_social_relationships = agent_state['social_relationships']
+                break
+        
+        for name, interaction in analytics['socialRelationships'].items():
+            relationship_data.append({ "agent": name, "closeness": round(agent_social_relationships[name]['closeness'] / 15, 2) * 100, "interactions": interaction })
+        analytics_data[agent]['socialRelationships'] = relationship_data
+        
+        agent_emotions = []
+        total_emotion = 0
+        for emotion, value in analytics['emotions'].items():
+            total_emotion += value
+        for emotion, value in analytics['emotions'].items():
+            agent_emotions.append({ "emotion": emotion.title(), "percentage": round(value / total_emotion, 2) * 100 })
+        analytics_data[agent]['emotions'] = agent_emotions
+        
+        analytics_data[agent]['activities']['timestamps'] = last_5_times
+        for recent_time in last_5_times:
+            current_state = json.load(open(f"../generations/kuro_ai_universe/state_{recent_time.split(' ')[0]}_{recent_time.split(' ')[1].replace(':', 'h')}.json"))
+            activity_data = ""
+            for agent_state in current_state['agents']:
+                if agent_state['name'] == agent:
+                    activity_data = agent_state['activity']
+                    break
+            category_data = name_to_agent[agent].get_agent_activity_category(activity_data)
+            analytics_data[agent]['activities']['activities'].append(category_data)
+    
+    return jsonify(analytics_data), 200
+    
+
 if __name__ == '__main__':
     logging.basicConfig(format='---%(asctime)s %(levelname)s \n%(message)s ---', level=logging.INFO)
 
@@ -397,8 +490,3 @@ if __name__ == '__main__':
         port=5000,
         debug=True
     )
-    
-
-    
-
-

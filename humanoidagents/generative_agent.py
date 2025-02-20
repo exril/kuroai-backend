@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from datetime import datetime
 from functools import cache
 
@@ -43,8 +44,8 @@ class GenerativeAgent:
     @cache
     def plan(self, curr_time, condition=None):
         plan = self.initial_plan(curr_time, condition=condition)
-        logging.info("day_plan")
-        logging.info(plan)
+        # logging.info("day_plan")
+        # logging.info(plan)
         return plan
 
     @staticmethod
@@ -164,8 +165,9 @@ On {date},
             resulting_plan = GenerativeAgent.postprocess_initial_plan(resulting_plan)
 
             attempts += 1
-            logging.info(f"planning day attempt number {attempts} / {max_attempts}")
-            logging.info(resulting_plan)
+            
+            # logging.info(f"planning day attempt number {attempts} / {max_attempts}")
+            # logging.info(resulting_plan)
 
         if attempts == max_attempts:
             raise ValueError("Initial Plan generation failed")
@@ -239,8 +241,8 @@ Plan in intervals of {time_interval}:
             resulting_plan = '\n'.join([plan_item for plan_item in resulting_plan if plan_item.strip()])
 
             attempts += 1
-            logging.info(f"planning {time_interval} attempt number {attempts} / {max_attempts}")
-            logging.info(resulting_plan)
+            # logging.info(f"planning {time_interval} attempt number {attempts} / {max_attempts}")
+            # logging.info(resulting_plan)
 
         if attempts == max_attempts:
             raise ValueError(f"Plan {time_interval} generation failed")
@@ -252,7 +254,7 @@ Plan in intervals of {time_interval}:
 
     def get_relevance_scores(self, query):
         query_embedding = self.LLM.get_embeddings(query)
-        logging.info(json.dumps([memory_item["activity"] for memory_item in self.memory], indent=4))
+        # logging.info(json.dumps([memory_item["activity"] for memory_item in self.memory], indent=4))
         memory_item_embeddings = [self.LLM.get_embeddings(memory_item["activity"]) for memory_item in self.memory]
         scores = cosine_similarity([query_embedding], memory_item_embeddings)[0]
         return scores
@@ -634,12 +636,12 @@ Plan in intervals of {time_interval}:
         other_activity = other_agent.get_agent_action_retrieval_only(curr_time)
         summary_of_relevant_context = self.get_summary_of_relevant_context(other_agent, other_activity, curr_time)
         
-        if not conversation_history:
-            # first turn, use only the intent of the speaker to ground
-            background = f"{self.name} hopes to do this: {reaction}"
-        else:
-            # else continue the conversation
-            background = GenerativeAgent.convert_conversation_in_linearized_representation(conversation_history)
+        # if not conversation_history:
+        #     # first turn, use only the intent of the speaker to ground
+        #     background = f"{self.name} hopes to do this: {reaction}"
+        # else:
+        #     # else continue the conversation
+        background = GenerativeAgent.convert_conversation_in_linearized_representation(conversation_history)
         
         #What would he say next to {other_agent.name}? Please respond in a conversational style.
         prompt = f"""
@@ -650,6 +652,7 @@ Plan in intervals of {time_interval}:
         Summary of relevant context from {self.name}’s memory:
         {summary_of_relevant_context}
         {background}
+        {"Continue" if background != '' else "Start"} the conversation with the following reaction: {reaction}
         What would {self.name} say next to {other_agent.name}?
         {self.name}:"""
         return self.LLM.get_llm_response(prompt)
@@ -674,7 +677,7 @@ Plan in intervals of {time_interval}:
             if conversation_history[-1]["reaction"] is None:
                 return conversation_history
 
-            logging.info(json.dumps(conversation_history[-1], indent=4))
+            # logging.info(json.dumps(conversation_history[-1], indent=4))
             
             # other turn 
             response_other = other_agent.get_agent_reaction_about_another_agent(self, curr_time)
@@ -685,7 +688,7 @@ Plan in intervals of {time_interval}:
                 "text": speak_other, 
                 "reaction": response_other
             })
-            logging.info(json.dumps(conversation_history[-1], indent=4))
+            # logging.info(json.dumps(conversation_history[-1], indent=4))
         linearized_conversation_history = GenerativeAgent.convert_conversation_in_linearized_representation(conversation_history)
 
         #add dialogue to memory of both agents
@@ -740,8 +743,8 @@ Plan in intervals of {time_interval}:
             resulting_plan = GenerativeAgent.expand_plan_into_15m_intervals(self.LLM, curr_activity, next_activity, date_nl, time_interval=time_interval)
 
             attempts += 1
-            logging.info(f"planning {time_interval} attempt number {attempts} / {max_attempts}")
-            logging.info(resulting_plan)
+            # logging.info(f"planning {time_interval} attempt number {attempts} / {max_attempts}")
+            # logging.info(resulting_plan)
 
         # if attempts == max_attempts:
         #     raise ValueError(f"Get {time_interval} plan failed")

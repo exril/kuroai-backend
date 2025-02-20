@@ -1,4 +1,5 @@
 import json
+import time
 import random
 from functools import cache
 import logging
@@ -121,14 +122,15 @@ updated plan:
             plan = HumanoidAgent.change_plans_helper(self.LLM, suggested_change, existing_plan)
 
             attempts += 1
-            logging.info(f"replanning at {time_nl} attempt number {attempts} / {max_attempts}")
+            # logging.info(f"replanning at {time_nl} attempt number {attempts} / {max_attempts}")
             if not GenerativeAgent.check_plan_format(plan):
-                logging.info("Failed Plan")
-            logging.info(plan)
+                pass
+                # logging.info("Failed Plan")
+            # logging.info(plan)
 
         if attempts == max_attempts:
-            logging.info("Existing plan")
-            logging.info(existing_plan)
+            # logging.info("Existing plan")
+            # logging.info(existing_plan)
             return None
         return plan
 
@@ -205,6 +207,7 @@ updated plan:
             # set floor to 0 and ceiling to 10 for all basic_needs
             self.__dict__["basic_needs"][attr] = min(10, self.__dict__["basic_needs"][attr])
             self.__dict__["basic_needs"][attr] = max(0, self.__dict__["basic_needs"][attr])
+            
 
         return None
     
@@ -241,7 +244,7 @@ updated plan:
 
             if conversation_history[-1]["reaction"] is None:
                 return conversation_history
-            logging.info(json.dumps(conversation_history[-1], indent=4))
+            # logging.info(json.dumps(conversation_history[-1], indent=4))
 
             # other turn 
             response_other = other_agent.get_agent_reaction_about_another_agent(self, curr_time, conversation_history=conversation_history)
@@ -253,7 +256,8 @@ updated plan:
                 "text": speak_other, 
                 "reaction": response_other
             })
-            logging.info(json.dumps(conversation_history[-1], indent=4))
+            # logging.info(json.dumps(conversation_history[-1], indent=4))
+            
         linearized_conversation_history = GenerativeAgent.convert_conversation_in_linearized_representation(conversation_history)
 
         #add dialogue to memory of both agents
@@ -346,7 +350,8 @@ updated plan:
         summary_of_relevant_context = self.get_summary_of_relevant_context(other_agent, other_activity, curr_time)
 
         linearized_conversation_history = GenerativeAgent.convert_conversation_in_linearized_representation(conversation_history) 
-        
+        print("linearized_conversation_history", linearized_conversation_history)
+        print("summary_of_relevant_context", summary_of_relevant_context)
         self_name = self.name 
         other_name = other_agent.name
         return HumanoidAgent.speak_to_other_agent_helper(self.LLM, self_summary, basic_needs_and_emotional_state, closeness, formatted_date_time, self_name, self_activity, other_name, other_activity, summary_of_relevant_context, reaction, linearized_conversation_history)
@@ -355,18 +360,19 @@ updated plan:
     @staticmethod
     def speak_to_other_agent_helper(LLM, self_summary, basic_needs_and_emotional_state, closeness, formatted_date_time, self_name, self_activity, other_name, other_activity, summary_of_relevant_context, reaction, linearized_conversation_history):
         prompt = f"""
-{self_summary}
-{"Feelings: " + basic_needs_and_emotional_state if basic_needs_and_emotional_state else ""}
-Closeness: {closeness}
-{formatted_date_time}
-{self_name}’s status: {self_activity}
-Observation: {self_name} saw {other_name} {other_activity}
-Summary of relevant context from {self_name}’s memory:
-{summary_of_relevant_context}
-{self_name} hopes to do this: {reaction}
-{linearized_conversation_history}
-What would {self_name} say next to {other_name}?
-{self_name}:"""
+        {self_summary}
+        {"Feelings: " + basic_needs_and_emotional_state if basic_needs_and_emotional_state else ""}
+        Closeness: {closeness}
+        {formatted_date_time}
+        {self_name}’s status: {self_activity}
+        Observation: {self_name} saw {other_name} {other_activity}
+        Summary of relevant context from {self_name}’s memory:
+        {summary_of_relevant_context}
+        {linearized_conversation_history}
+        {"Continue" if linearized_conversation_history != '' else "Start"} the dialgue{" with the following reactions: " + reaction if linearized_conversation_history == '' else ''}!
+        What would {self_name} say next to {other_name}? Keep the response short, concise and natural in 1 or 2 sentences.
+        {self_name}:"""
+        print("prompt", prompt)
         llm_response = LLM.get_llm_response(prompt)
 
         # in case there are leading or trailing whitespace
@@ -388,11 +394,11 @@ What would {self_name} say next to {other_name}?
         
         closeness_value = self.social_relationships[other_agent.name]['closeness']
 
-        if closeness_value < 5:
+        if closeness_value < 3:
             description = "distant"
-        elif closeness_value < 10:
+        elif closeness_value < 6:
             description = "rather close"
-        elif closeness_value < 15:
+        elif closeness_value < 10:
             description = "close"
         else:
             description = "very close"
