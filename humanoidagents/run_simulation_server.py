@@ -324,7 +324,7 @@ def write_logs():
     if os.path.exists(state_path):
         saved_state_data = json.load(open(state_path))
         return saved_state_data
-    return {}
+    
     list_of_agent_statuses = []
     logging.info(curr_date + ' ' + specific_time)
     for _, agent in name_to_agent.items():
@@ -394,6 +394,13 @@ def get_analytics():
             time_series.append(current_time.strftime('%Y-%m-%d %H:%M'))
         current_time += timedelta(minutes=60)
     
+    social_rel_time_series = []
+    current_time = datetime(2025, 2, 4, 6, 0, 0)
+    while current_time <= end_time:
+        if 6 <= current_time.hour:  # Include only times from 06:00 onward
+            social_rel_time_series.append(current_time.strftime('%Y-%m-%d %H:%M'))
+        current_time += timedelta(minutes=60)
+    
     timestamps = []
     analytics_data = dict()
     for name, _ in name_to_agent.items():
@@ -419,6 +426,10 @@ def get_analytics():
             analytics_data[agent['name']]['basicNeeds']['energy'].append(agent['basic_needs']['energy'] * 10)
             analytics_data[agent['name']]['basicNeeds']['health'].append(agent['basic_needs']['health'] * 10)
             analytics_data[agent['name']]['emotions'][agent['emotion']] = analytics_data[agent['name']]['emotions'].get(agent['emotion'], 0) + 1
+    
+    for time in social_rel_time_series:
+        data_file_name = f"state_{time.split(' ')[0]}_{time.split(' ')[1].replace(':', 'h')}.json"
+        state_data = json.load(open(f"../generations/kuro_ai_universe/{data_file_name}"))
         for location, conversations_in_location in state_data['conversations'].items():
             for conversations in conversations_in_location:
                 if len(conversations) < 2:
