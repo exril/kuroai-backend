@@ -436,7 +436,6 @@ def get_analytics():
                     continue
                 analytics_data[conversations[0]['name']]['socialRelationships'][conversations[1]['name']] = analytics_data[conversations[0]['name']]['socialRelationships'].get(conversations[1]['name'], 0) + len(conversations)
 
-    last_5_times = time_series[-5:-1]
     last_state_data = json.load(open(f"../generations/kuro_ai_universe/state_{time_series[-1].split(' ')[0]}_{time_series[-1].split(' ')[1].replace(':', 'h')}.json"))
     for agent, analytics in analytics_data.items():
         relationship_data = []
@@ -458,19 +457,67 @@ def get_analytics():
             agent_emotions.append({ "emotion": emotion.title(), "percentage": round(value / total_emotion, 2) * 100 })
         analytics_data[agent]['emotions'] = agent_emotions
         
-        analytics_data[agent]['activities']['timestamps'] = last_5_times
-        for recent_time in last_5_times:
+        current_activity = ""
+        activity_count = 0
+        for recent_time in time_series[::-1]:
             current_state = json.load(open(f"../generations/kuro_ai_universe/state_{recent_time.split(' ')[0]}_{recent_time.split(' ')[1].replace(':', 'h')}.json"))
             activity_data = ""
+            location = ""
             for agent_state in current_state['agents']:
                 if agent_state['name'] == agent:
                     activity_data = agent_state['activity']
+                    location = agent_state['location'][0]
                     break
+            if activity_data.split('>')[0].strip() == current_activity:
+                continue
+            current_activity = activity_data.split('>')[0].strip()
+            analytics_data[agent]['activities']['timestamps'].append(recent_time)
             category_data = name_to_agent[agent].get_agent_activity_category(activity_data)
+            category_data["timestamp"] = recent_time
+            category_data["description"] = current_activity.title()
+            category_data["location"] = location
             analytics_data[agent]['activities']['activities'].append(category_data)
-    
+            
+            activity_count += 1
+            if activity_count == 4:
+                break
+        
+        analytics_data[agent]['activities']['activities'].reverse()
+        analytics_data[agent]['activities']['timestamps'].reverse()
+        
     return jsonify(analytics_data), 200
+
+@app.route("/activity_log", methods=['POST'])
+def get_activity_log():
+    data = request.json
     
+    start_time_str = data.get('start_time')  # e.g., "2025-02-03 08:00"
+    end_time_str = data.get('end_time')      # e.g., "2025-02-06 15:30"
+    try:
+        start_time = datetime.strptime(start_time_str, '%Y-%m-%d %H:%M')
+        end_time = datetime.strptime(end_time_str, '%Y-%m-%d %H:%M')
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM'."}), 400
+
+    # Generate a list of time series with 30-minute intervals
+    time_series = []
+    if start_time.minute < 30:
+        # Set minute to 0
+        start_time = start_time.replace(minute=0, second=0, microsecond=0)
+    else:
+        # Set minute to 30
+        start_time = start_time.replace(minute=30, second=0, microsecond=0)
+    current_time = start_time
+    while current_time <= end_time:
+        if 6 <= current_time.hour:  # Include only times from 06:00 onward
+            time_series.append(current_time.strftime('%Y-%m-%d %H:%M'))
+        current_time += timedelta(minutes=60)
+    
+    activity_log = {
+        "timestamp": "",
+        "description": "",
+        
+    }
 
 if __name__ == '__main__':
     logging.basicConfig(format='---%(asctime)s %(levelname)s \n%(message)s ---', level=logging.INFO)
@@ -501,8 +548,3 @@ if __name__ == '__main__':
         port=5000,
         debug=True
     )
-    
-
-    
-
-
